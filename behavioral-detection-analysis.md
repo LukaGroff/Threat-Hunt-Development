@@ -62,7 +62,7 @@ Simulate a realistic attacker chain to study:
 
 ## ⚠️ Adversary Simulation Steps
 
-1. On Attacker machine I created a file with a script inside that creates a hidden directory with a "reverse shell" script (just opens calculator app). It also creates persistence with registry keys that runs on logon.
+1. On Attacker machine I created a file with a script that creates a hidden directory with a "reverse shell" script (just opens calculator app). It also creates persistence with registry keys that runs on logon.
 
 <img width="750" height="438" alt="image" src="https://github.com/user-attachments/assets/1971e217-14ac-4715-a092-b21b70c70093" />
 
