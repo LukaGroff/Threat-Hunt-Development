@@ -220,7 +220,7 @@ Example query:
 ```kql
 DeviceFileEvents
 | where InitiatingProcessFileName == "<process>"
-
+```
 
 
 # 🧠 Behavioral Correlation Analysis
