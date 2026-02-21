@@ -96,14 +96,10 @@ Simulate a realistic attacker chain to study:
 <img width="650" height="596" alt="image" src="https://github.com/user-attachments/assets/8b0c562e-4be7-4acc-9382-ad61813d5503" />
 
 **Observations**: 
-
 When the command was executed, Microsoft Defender for Endpoint did not record the activity in the DeviceProcessEvents table as initially expected.
-
 Instead, the activity was primarily captured in:
-
-DeviceEvents (under AdditionalFields)
-
-DeviceRegistryEvents
+- DeviceEvents (under AdditionalFields)
+- DeviceRegistryEvents
 
 This indicates that Defender prioritized logging the configuration change and security state modification rather than the PowerShell process execution itself.
 
