@@ -203,9 +203,11 @@ DeviceFileEvents
 | where InitiatingProcessId == "3128"
 | project Timestamp, ActionType, FileName, FolderPath
 ```
-<img width="700" height="268" alt="image" src="https://github.com/user-attachments/assets/a8eb53be-03a7-4d0c-aa6a-fd78fb90f8fc" />
+<img width="600" height="268" alt="image" src="https://github.com/user-attachments/assets/a8eb53be-03a7-4d0c-aa6a-fd78fb90f8fc" />
 
-<img width="700" height="480" alt="image" src="https://github.com/user-attachments/assets/59d49181-de0a-4b7f-979b-b2622bf00418" />
+**Process Tree**
+
+<img width="500" height="480" alt="image" src="https://github.com/user-attachments/assets/59d49181-de0a-4b7f-979b-b2622bf00418" />
 
 
 **Observations**:
