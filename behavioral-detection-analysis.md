@@ -19,6 +19,7 @@ Multiple alerts were triggered, including:
 
 - Living-off-the-Land Binary (LOLBIN) usage
 - Behavioral ransomware heuristic (T1486)
+- Anomaly detected in ASEP registry (T1112 - Modify registry & T1547.001 - Registry Run Keys / Startup Folder)
 
 No encryption or destructive payloads were deployed.
 
@@ -83,7 +84,7 @@ Simulate a realistic attacker chain to study:
 
 ---
 
-# 🔴 Phase 2 – Adversary Simulation (Behavioral)
+# 🔴 Phase 2 – Blue Team Investigation
 
 ## 1️⃣ Defense Impairment
 
@@ -196,7 +197,42 @@ Observed telemetry:
 - File creation events
 - Directory attribute modification
 
-> 📷 Insert file event logs  
+```KQL
+DeviceFileEvents
+| where DeviceName contains "alg-fin-3"
+| where InitiatingProcessId == "3128"
+| project Timestamp, ActionType, FileName, FolderPath
+```
+<img width="700" height="268" alt="image" src="https://github.com/user-attachments/assets/a8eb53be-03a7-4d0c-aa6a-fd78fb90f8fc" />
+
+<img width="700" height="480" alt="image" src="https://github.com/user-attachments/assets/59d49181-de0a-4b7f-979b-b2622bf00418" />
+
+
+**Observations**:
+After maint.ps1 was downloaded via certutil.exe, additional file and process activity was observed.
+
+To investigate further, I pivoted to file telemetry using the filename maint.ps1. From there, I examined the associated process tree to identify:
+- Parent process
+- Grandparent process
+- Related process IDs (PIDs)
+- Process Tree Correlation
+
+Using the recorded PIDs, the following chain was identified:
+powershell.exe (PID 3128)
+→ spawned certutil.exe (PID 6020)
+→ wrote maint.ps1 to disk
+
+Further investigation revealed that the same PowerShell process (PID 3128):
+- Created an additional script: rev_sh.ps1
+- Created a hidden directory (visible in file telemetry)
+
+This confirms that the PowerShell process responsible for initiating the LOLBIN activity also performed follow-on file creation activity.
+
+**Microsoft Defender events**
+
+The events show exactly what happened, step by step and the full script that was executed when maint.ps1 was ran. It shows, registry modification and a new hidden directory and file created, which eventually ran calculator.exe
+
+<img width="800" height="940" alt="image" src="https://github.com/user-attachments/assets/bc323662-2b4f-422f-9cac-a93dd6d32c67" />
 
 ---
 
@@ -213,6 +249,11 @@ Observed:
 - PowerShell command reference in value
 
 > 📷 Insert DeviceRegistryEvents screenshot  
+
+**Alert**:
+
+<img width="650" height="1068" alt="image" src="https://github.com/user-attachments/assets/236ab9d6-54de-43d9-bb79-f6ff1e996073" />
+
 
 ---
 
