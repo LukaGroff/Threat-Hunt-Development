@@ -254,28 +254,12 @@ Observed:
 
 **Alert**:
 
-<img width="650" height="1068" alt="image" src="https://github.com/user-attachments/assets/236ab9d6-54de-43d9-bb79-f6ff1e996073" />
+<img width="400" height="1068" alt="image" src="https://github.com/user-attachments/assets/236ab9d6-54de-43d9-bb79-f6ff1e996073" />
 
 
----
 
-# 🚨 Phase 3 – Defender Alerts Triggered
 
-## Alert 1 – Living-off-the-Land Binary Usage
-
-Description:
-
-> Use of native Windows utility to execute or retrieve potentially malicious content.
-
-Triggered by:
-
-- Process chain behavior
-- Network activity
-- Correlation with prior defense impairment
-
----
-
-## Alert 2 – Ransomware Behavior Heuristic
+## Alert – Ransomware Behavior Heuristic
 
 **MITRE:** T1486 – Data Encrypted for Impact
 
@@ -292,44 +276,8 @@ This was a behavioral correlation trigger.
 
 > 📷 Insert ransomware alert screenshot  
 
----
 
-# 🔎 Phase 4 – Blue Team Investigation
-
-## 📊 Process Tree Analysis
-userinit.exe
-└── explorer.exe
-└── powershell.exe
-└── <native utility>
-
-
-Observations:
-
-- Legitimate signed binaries
-- Suspicious command-line parameters
-- Clear parent-child relationship
-
-> 📷 Insert process graph screenshot  
-
----
-
-## 📁 File System Telemetry
-
-Observed:
-
-- Hidden directory creation
-- Script file creation
-- Cache file modification burst
-
-Example query:
-
-```kql
-DeviceFileEvents
-| where InitiatingProcessFileName == "<process>"
-```
-
-
-# 🧠 Behavioral Correlation Analysis
+## 🧠 Behavioral Correlation Analysis for the Ransomware alert
 
 Defender likely correlated:
 
@@ -348,6 +296,10 @@ This behavior chain resembles ransomware pre-encryption stages.
 
 
 # 🔬 Telemetry Comparison: Download Methods
+
+> method 1
+> method 2
+> ...
 
 
 # ⚠️ Disclaimer
