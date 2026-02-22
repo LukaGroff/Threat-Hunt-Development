@@ -259,40 +259,25 @@ Observed:
 
 
 
-## Alert – Ransomware Behavior Heuristic
+# Alert – Ransomware Behavior Heuristic
 
 **MITRE:** T1486 – Data Encrypted for Impact
 
 Alert indicated:
 
-- Rapid file modifications by SearchApp.exe
-- Behavioral ransomware classification
+The ransomware classification appears to have been triggered by Defender’s behavioral correlation engine rather than confirmed encryption activity.
 
-Important finding:
+The sequence of events included:
+- Living-off-the-land binary usage (certutil.exe)
+- Script execution via PowerShell
+- Registry modification in an ASEP location
+- Additional file creation activity
 
-No encryption occurred.
+When combined, these behaviors resemble early-stage ransomware attack patterns (execution → persistence → impact preparation), leading to high-severity alert classification.
 
-This was a behavioral correlation trigger.
+No direct evidence of file encryption or ransom artifact creation was observed.
 
-> 📷 Insert ransomware alert screenshot  
-
-
-## 🧠 Behavioral Correlation Analysis for the Ransomware alert
-
-Defender likely correlated:
-
-Defense impairment
-
-Script execution
-
-LOLBin usage
-
-Registry persistence
-
-Burst file modification activity
-
-This behavior chain resembles ransomware pre-encryption stages.
-
+<img width="650" height="268" alt="image" src="https://github.com/user-attachments/assets/06e82a7d-5859-43c6-8148-fd6fcf29924f" />
 
 
 # 🔬 Telemetry Comparison: Download Methods
